@@ -227,12 +227,18 @@ function createTransactionObject(title, amount, date, type) {
   };
 }
 
-function validateInput(title, amount) {
+function validateInput(title, amount, date, type) {
   if (title.trim() === "") {
     alert("Keterangan tidak boleh kosong!");
     return false;
   } else if (amount < 1) {
     alert("Nominal harus lebih besar dari 0 rupiah!");
+    return false;
+  } else if (!date) {
+    alert("Tanggal tidak boleh kosong!");
+    return false;
+  } else if (!type) {
+    alert("Klasifikasi (Pemasukan/Pengeluaran) harus dipilih!");
     return false;
   }
   return true;
@@ -244,7 +250,14 @@ transactionForm.addEventListener("submit", function (event) {
   if (checkStorage()) {
     const amountValue = Number(transactionFormAmountInput.value);
 
-    if (validateInput(transactionFormTitleInput.value, amountValue)) {
+    if (
+      validateInput(
+        transactionFormTitleInput.value,
+        amountValue,
+        transactionFormDateInput.value,
+        transactionFormTypeSelect.value,
+      )
+    ) {
       if (currentlyEditingId !== null) {
         const index = findTransactionIndex(currentlyEditingId);
 
@@ -393,7 +406,7 @@ function makeTransaction(transaction) {
     `tracker-transaction-item__amount--${type}`,
   );
   textAmount.setAttribute("data-testid", "transactionItemAmount");
-  textAmount.innerText = `${formattedAmount}`;
+  textAmount.innerText = `Nominal: ${formattedAmount}`;
 
   const right = document.createElement("div");
   right.classList.add("tracker-transaction-item__right");
